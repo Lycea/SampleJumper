@@ -18,3 +18,8 @@ scr_height=0
 game_state = 1
 
 
+
+
+---debug stuff
+
+string_list_distances ={}
