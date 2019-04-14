@@ -86,6 +86,17 @@ function game.update()
   
   for key,v in pairs(key_list) do
     local action=handle_keys(key)--get key callbacks
+    
+    --editor actions ... don't mind this
+    if action["start_edit"] then
+        game_state = GameStates.EDITOR
+    end
+    if action["stop_edit"] then
+        game_state = GameStates.PLAYER_ALIVE
+    end
+    
+    
+    
     if action["move"] then
         --print(action["move"])
         player.vel:add(action["move"])
@@ -96,7 +107,26 @@ function game.update()
         player.vel:add(action["jump"])
     end
   end
-
+  
+  --editor mouse events ...
+  if mouse_event and game_state == GameStates.EDITOR then
+      print(mouse_event.key)
+      if mouse_event.key == 1 then --clicked
+        if selected_point == false then
+            selected_point = true
+            first_point.x = mouse_event.x
+            first_point.y = mouse_event.y
+        else
+            selected_point = false
+            table.insert(objects,StaticBlock(first_point.x,first_point.y,mouse_event.x-first_point.x,mouse_event.y-first_point.y))
+        end
+        
+      end
+      
+      
+      mouse_event = nil
+  end
+  
   
   update_player()
 end
@@ -110,20 +140,18 @@ function game.draw()
     
   love.graphics.rectangle("fill",player.pos.x,player.pos.y,32,32)
   
-  local dir_x = 50 * math.sin(player.vel:heading())+player.pos.x
-  local dir_y = 50 * math.cos(player.vel:heading())+player.pos.y
+  if game_state == GameStates.EDITOR then
+    if selected_point == true then
+       love.graphics.rectangle("line",first_point.x,first_point.y, love.mouse.getX()-first_point.x,love.mouse.getY()-first_point.y)
+    end
+  end
   
-  love.graphics.line(player.pos.x,player.pos.y,dir_x,dir_y)
   
   love.graphics.print(table.concat(string_list_distances,"\n"),0,0)
 end
 
 
 function game.keyHandle(key,code,r,pressed_)
-
-    
-    
-    
     --real handling...
     if pressed_ == true then
         key_list[key] = true
@@ -132,5 +160,15 @@ function game.keyHandle(key,code,r,pressed_)
         key_list[key] = nil
     end
 end
+
+
+function game.MouseHandle(x,y,key,t)
+    mouse_event = {x=x,y=y,key=key,t=t}
+end
+
+function game.MouseMoved(x,y)
+    
+end
+
 
 return game

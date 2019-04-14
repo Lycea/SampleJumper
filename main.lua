@@ -43,10 +43,10 @@ function love.keyreleased(k)
 end
 
 function love.mousepressed(x,y,btn,t)
-  --game.MouseHandle(x,y,btn,t)
+  game.MouseHandle(x,y,btn,t)
 end
 
 function love.mousemoved(x,y,dx,dy)
-    --game.MouseMoved(x,y)
+  game.MouseMoved(x,y)
 end
 

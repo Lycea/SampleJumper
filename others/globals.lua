@@ -17,9 +17,16 @@ scr_height=0
 
 game_state = 1
 
+--editor
+selected_point = false  --first selected point
+first_point = {x=0,y=0}
 
 
 
 ---debug stuff
 
 string_list_distances ={}
+
+
+
+
