@@ -75,7 +75,7 @@ function game.load()
   --init a test object for now
   
   table.insert(objects,StaticBlock(32*5,scr_height-100,100,100))
-  table.insert(objects,StaticBlock(0,scr_height,scr_width,0))
+  table.insert(objects,StaticBlock(0,scr_height,scr_width,30))
   
 end
 
