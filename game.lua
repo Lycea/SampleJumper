@@ -24,9 +24,18 @@ function ini_player()
     player.vel = vector(0)
     player.acc = vector(0)
     player.dim = {width = 32,height = 32}
+    
+    player.vel:add(gravity)
 end
 function slow_player()
-    player.vel.x = player.vel.x-(player.vel.x/10)
+    table.insert(string_list_distances,"Player speed x: "..player.vel.x)
+    table.insert(string_list_distances,"Player speed_vec: "..player.vel:length())
+    
+    if math.floor( math.abs(player.vel.x*0.01)) == 0 then
+        player.vel.x = 0
+    else
+        player.vel.x = math.floor(player.vel.x*0.01)
+    end
 end
 
 function update_player()
@@ -37,14 +46,15 @@ function update_player()
     end
     
     player.pos:add(player.vel)
-    local location_object =is_on_object(player)
-    if location_object then
-      player.pos.y = location_object.pos.y -32
-      player.vel.y = 0
-    else
+    --local location_object =is_on_object(player)
+    handle_collisions(player)
+    
+    if player.vel.y ~=0 then
        player.vel:add(gravity)
     end
-    slow_player()
+    if player.vel.x ~= 0 then
+        slow_player()
+    end
     --print("Pos y:"..player.pos.y)
     
     --print(player.vel:length())
@@ -64,7 +74,7 @@ function game.load()
   
   --init a test object for now
   
-  table.insert(objects,StaticBlock(32*5,scr_height-20,100,100))
+  table.insert(objects,StaticBlock(32*5,scr_height-100,100,100))
   table.insert(objects,StaticBlock(0,scr_height,scr_width,0))
   
 end
@@ -99,6 +109,11 @@ function game.draw()
     
     
   love.graphics.rectangle("fill",player.pos.x,player.pos.y,32,32)
+  
+  local dir_x = 50 * math.sin(player.vel:heading())+player.pos.x
+  local dir_y = 50 * math.cos(player.vel:heading())+player.pos.y
+  
+  love.graphics.line(player.pos.x,player.pos.y,dir_x,dir_y)
   
   love.graphics.print(table.concat(string_list_distances,"\n"),0,0)
 end
