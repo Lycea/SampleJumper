@@ -49,7 +49,7 @@ function update_player()
     --local location_object =is_on_object(player)
     handle_collisions(player)
     
-    if player.vel.y ~=0 then
+    if player.vel.y ~=0 or no_gravity == false then
        player.vel:add(gravity)
     end
     if player.vel.x ~= 0 then
@@ -129,6 +129,7 @@ function game.update()
   
   
   update_player()
+  mouse_event = nil
 end
 
 
