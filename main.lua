@@ -10,8 +10,6 @@ local scr_height
 ------------------------------------------------
 
 
-
-
 function love.load()
   love.keyboard.setKeyRepeat(false)
   scr_width,scr_height = love.graphics.getDimensions()

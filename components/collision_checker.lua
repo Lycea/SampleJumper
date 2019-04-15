@@ -14,8 +14,8 @@ local function angle_between(a,b)
 end
 
 local function check_x(a,b)
-    table.insert(string_list_distances,"dist: : "..dist_center(a,b))
-    table.insert(string_list_distances,"width: : "..a.dim.width/2)
+    --table.insert(string_list_distances,"dist: : "..dist_center(a,b))
+    --table.insert(string_list_distances,"width: : "..a.dim.width/2)
     local dist = dist_center(a,b)
     if dist>=a.dim.width/2  then
         return nil
@@ -28,16 +28,16 @@ end
 
 
 function is_on_object2(entity)
-    string_list_distances={}
-    table.insert(string_list_distances,entity.pos.y)
-    table.insert(string_list_distances,math.floor(math.deg(entity.pos:heading())))
+    --string_list_distances={}
+    --table.insert(string_list_distances,entity.pos.y)
+    --table.insert(string_list_distances,math.floor(math.deg(entity.pos:heading())))
     
     for idx,object in pairs(objects) do
-        table.insert(string_list_distances,"Angle: "..math.deg(angle_between(object,entity)))
-        table.insert(string_list_distances,object.pos.y)
+        --table.insert(string_list_distances,"Angle: "..math.deg(angle_between(object,entity)))
+        --table.insert(string_list_distances,object.pos.y)
         if math.floor(entity.pos.y) >= object.pos.y-entity.dim.height  and check_x(entity,object)  then
             
-            table.insert(string_list_distances,object.pos.y)
+            --table.insert(string_list_distances,object.pos.y)
             
             return object
         end
@@ -100,7 +100,7 @@ local function collision_side(a,b)
 end
 
 function is_on_object(entity)
-    string_list_distances ={}
+    --string_list_distances ={}
     --local collision_list = collides(entity)
     for idx,object in pairs(objects) do
        local collides = collision_side(entity,object) 
@@ -115,7 +115,7 @@ end
 
 
 function handle_collisions (entity)
-     string_list_distances ={}
+     --string_list_distances ={}
     --local collision_list = collides(entity)
     for idx,object in pairs(objects) do
        local collides = collision_side(entity,object) 
@@ -124,6 +124,7 @@ function handle_collisions (entity)
           if collides == "bottom" then
             entity.pos.y = object.pos.y -entity.dim.height
             entity.vel.y =0
+            dash_used = false
           elseif collides == "top" then
               entity.pos.y = object.pos.y +object.dim.height
           elseif collides == "left" then

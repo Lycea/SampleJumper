@@ -12,16 +12,24 @@ no_gravity = false
 
 gravity = vector(0,0.2)
 jump = vector(0,-5)
-right = vector(2,0)
-left = vector(-2,0)
+right = vector(4,0)
+left = vector(-4,0)
+
 
 scr_width=0
 scr_height=0
 
 game_state = 1
 
+vel_dash = 12
 
 
+last_keys ={}
+
+dash_used = false
+dash_time = 0.3
+dash_timer = 0
+cd_dash    = 0
 
 
 --editor

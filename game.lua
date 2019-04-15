@@ -28,22 +28,30 @@ function ini_player()
     player.vel:add(gravity)
 end
 function slow_player()
+    local slow_perc = 0.01
     table.insert(string_list_distances,"Player speed x: "..player.vel.x)
     table.insert(string_list_distances,"Player speed_vec: "..player.vel:length())
     
-    if math.floor( math.abs(player.vel.x*0.01)) == 0 then
+    if math.floor( math.abs(player.vel.x*slow_perc)) == 0 then
         player.vel.x = 0
     else
-        player.vel.x = math.floor(player.vel.x*0.01)
+        player.vel.x = math.floor(player.vel.x*slow_perc)
     end
 end
 
 function update_player()
-   
-    if player.vel:length() > 25 then
-      player.vel:setLength(25)
+   local max_x = 10
+   local max_y = 10
+  
+    if player.vel.x > max_x then
+      player.vel.x = max_x
       --print("Length after adjustation:"..player.vel:length())
     end
+    
+    if player.vel.y > max_y then
+      player.vel.y = max_y
+    end
+    
     
     player.pos:add(player.vel)
     --local location_object =is_on_object(player)
@@ -52,20 +60,27 @@ function update_player()
     if player.vel.y ~=0 or no_gravity == false then
        player.vel:add(gravity)
     end
-    if player.vel.x ~= 0 then
+    if player.vel.x ~= 0 or no_gravity == false then
         slow_player()
     end
     --print("Pos y:"..player.pos.y)
     
     --print(player.vel:length())
+    if dash_used == true then
+      if dash_timer + dash_time <= love.timer.getTime() then
+        no_gravity = false
+      end
+    end
+    
+    
 end
 
 
 function game.load()
-  gravity = vector(0,0.2)
-  jump = vector(0,-5)
-  right = vector(0.1,0)
-  left = vector(-0.1,0)
+  gravity = vector(0,0.3)
+  jump = vector(0,-7)
+  right = vector(0.3,0)
+  left = vector(-0.3,0)
   
 
   
@@ -75,14 +90,14 @@ function game.load()
   --init a test object for now
   
   table.insert(objects,StaticBlock(32*5,scr_height-100,100,100))
-  table.insert(objects,StaticBlock(0,scr_height,scr_width,30))
+  table.insert(objects,StaticBlock(0,scr_height,scr_width,10* player.dim.height))
   
 end
 
 
 function game.update()
   --check key actions
-  
+  string_list_distances ={}
   
   for key,v in pairs(key_list) do
     local action=handle_keys(key)--get key callbacks
@@ -105,6 +120,27 @@ function game.update()
     
     if action["jump"] and is_on_object(player) then
         player.vel:add(action["jump"])
+    end
+    
+    if action["dash"]  then
+      table.insert(string_list_distances,"tried dash")
+      if dash_used == false then
+        table.insert(string_list_distances,"dashed")
+        no_gravity = true
+      
+        if key_list["left"] then
+          player.vel:add(vector(-vel_dash,0))
+        elseif key_list["right"] then
+          player.vel:add(vector(vel_dash,0))
+        end
+        if key_list["up"] then
+          player.vel:add(vector(0,-vel_dash))
+        elseif key_list["down"] then
+          player.vel:add(vector(0,vel_dash))
+        end
+        dash_used = true
+      end
+      
     end
   end
   

@@ -18,7 +18,8 @@ key_list ={
    ["return"] = "select",
    d ="drop",
    x = "dash",
-   c = "grep",
+   c = "jump",
+   v = "grep",
    e = "edit",
    mt={
      __index=function(table,key) 
@@ -33,12 +34,13 @@ key_list ={
 
 
 key_list_game={
-  up={jump=jump},
+  jump={jump=jump},
   --down={move="down"},
   left={move=left},
   right={move=right},
   exit = {exit = true},
   edit = {start_edit = true},
+  dash = {dash = true },
   default={},
   mt={
      __index=function(table,key) 
