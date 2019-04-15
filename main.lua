@@ -20,8 +20,14 @@ function love.load()
 end
 
 
-function love.update()
-  game.update()
+local tickPeriod = 1/50
+local accumulator = 0.0
+function love.update(dt)
+  accumulator = accumulator+dt
+  if accumulator >= tickPeriod then
+    game.update(dt)
+    accumulator = accumulator -tickPeriod
+  end
 end
 
 
