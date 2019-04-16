@@ -10,8 +10,8 @@ player ={}
 
 no_gravity = false
 
-gravity = vector(0,0.2)
-jump = vector(0,-5)
+gravity = vector(0,10)
+jump = vector(0,-7)
 right = vector(4,0)
 left = vector(-4,0)
 

@@ -126,6 +126,7 @@ function handle_collisions (entity)
             entity.vel.y =0
             dash_used = false
           elseif collides == "top" then
+              entity.vel.y =0
               entity.pos.y = object.pos.y +object.dim.height
           elseif collides == "left" then
               entity.pos.x = object.pos.x-entity.dim.width
