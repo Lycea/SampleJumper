@@ -129,16 +129,17 @@ function game.update()
         no_gravity = true
       
         if key_list["left"] then
-          player.vel:add(vector(-vel_dash,0))
+          player.vel.x = -vel_dash
         elseif key_list["right"] then
-          player.vel:add(vector(vel_dash,0))
+          player.vel.x = vel_dash
         end
         if key_list["up"] then
-          player.vel:add(vector(0,-vel_dash))
+          player.vel.y = -vel_dash
         elseif key_list["down"] then
-          player.vel:add(vector(0,vel_dash))
+          player.vel.y = vel_dash
         end
         dash_used = true
+        dash_timer = love.timer.getTime()
       end
       
     end
@@ -174,8 +175,15 @@ function game.draw()
         object:draw()
     end
     
+  
+  if no_gravity == true then
     
+    love.graphics.setColor(0.5,0.0,0)
+  end
+  
   love.graphics.rectangle("fill",player.pos.x,player.pos.y,32,32)
+  
+  love.graphics.setColor(1,1.0,1)
   
   if game_state == GameStates.EDITOR then
     if selected_point == true then
