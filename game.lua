@@ -60,7 +60,7 @@ function update_player()
     if player.vel.y ~=0 or no_gravity == false then
        player.vel:add(gravity)
     end
-    if player.vel.x ~= 0 or no_gravity == false then
+    if player.vel.x ~= 0 and no_gravity == false then
         slow_player()
     end
     --print("Pos y:"..player.pos.y)
@@ -68,12 +68,46 @@ function update_player()
     --print(player.vel:length())
     if dash_used == true then
       if dash_timer + dash_time <= love.timer.getTime() then
+        dash_lines[#dash_lines].stop ={x=player.pos.x,y=player.pos.y}
         no_gravity = false
+        dash_used = false
+        function dash_stop()
+        end
+        
+        dash_stop()
       end
     end
     
     
 end
+
+write_data = false
+local function hook_start(event,line)
+  local info = debug.getinfo(2)
+  local name =info.name
+  
+  if event == "call" then
+  
+    if name == "dash_start" then
+      write_data = true
+    end
+    
+    if name == "dash_stop" then
+      write_data = false
+    end
+  end
+  
+  if  write_data == false or not line  then
+    return
+  end
+  name = info.name or "nan"
+  file =io.open("test.txt","a")
+  
+  file:write(line.." "..name.." "..info.source.."\n")
+  file:close()
+  
+end
+
 
 
 function game.load()
@@ -82,7 +116,7 @@ function game.load()
   right = vector(0.3,0)
   left = vector(-0.3,0)
   
-
+  debug.sethook(hook_start,"cl")
   
   ini_player()
   scr_width,scr_height = love.graphics.getDimensions()
@@ -93,6 +127,8 @@ function game.load()
   table.insert(objects,StaticBlock(0,scr_height,scr_width,10* player.dim.height))
   
 end
+
+
 
 
 function game.update()
@@ -123,6 +159,9 @@ function game.update()
     end
     
     if action["dash"]  then
+      
+      function dash_start()
+      
       table.insert(string_list_distances,"tried dash")
       if dash_used == false then
         table.insert(string_list_distances,"dashed")
@@ -130,18 +169,23 @@ function game.update()
       
         if key_list["left"] then
           player.vel.x = -vel_dash
+          player.vel.y = 0
         elseif key_list["right"] then
           player.vel.x = vel_dash
+          player.vel.y = 0
         end
         if key_list["up"] then
           player.vel.y = -vel_dash
         elseif key_list["down"] then
           player.vel.y = vel_dash
         end
+        table.insert(dash_lines,{start={x=player.pos.x,y=player.pos.y}})
         dash_used = true
         dash_timer = love.timer.getTime()
       end
-      
+    end
+    
+      dash_start()
     end
   end
   
@@ -193,6 +237,18 @@ function game.draw()
   
   
   love.graphics.print(table.concat(string_list_distances,"\n"),0,0)
+  
+  
+  for idx,line in pairs(dash_lines) do
+      if line.stop then
+        love.graphics.circle("line",line.start.x,line.start.y,5)
+        love.graphics.circle("line",line.stop.x,line.stop.y,5)
+        love.graphics.line(line.start.x,line.start.y,line.stop.x,line.stop.y)
+      else
+        
+      end
+  end
+  
 end
 
 

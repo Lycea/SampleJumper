@@ -43,6 +43,6 @@ first_point = {x=0,y=0}
 
 string_list_distances ={}
 
-
+dash_lines ={}
 
 
