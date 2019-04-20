@@ -43,10 +43,14 @@ function update_player()
    local max_x = 10
    local max_y = 10
   
-    if player.vel.x > max_x then
-      player.vel.x = max_x
+  
+    player.vel.x = math.max(math.min(player.vel.x,10),-10)
+    --if player.vel.x > max_x then
+    --  player.vel.x = max_x
       --print("Length after adjustation:"..player.vel:length())
-    end
+    --end
+    
+    player.vel.y = math.max(math.min(player.vel.y,10),-10)
     
     if player.vel.y > max_y then
       player.vel.y = max_y
@@ -103,7 +107,7 @@ local function hook_start(event,line)
   name = info.name or "nan"
   file =io.open("test.txt","a")
   
-  file:write(line.." "..name.." "..info.source.."\n")
+  file:write(line.." "..name.." "..player.vel.x.." "..info.source.."\n")
   file:close()
   
 end
@@ -116,7 +120,7 @@ function game.load()
   right = vector(0.3,0)
   left = vector(-0.3,0)
   
-  debug.sethook(hook_start,"cl")
+  --debug.sethook(hook_start,"cl")
   
   ini_player()
   scr_width,scr_height = love.graphics.getDimensions()
