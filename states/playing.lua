@@ -1,39 +1,7 @@
 
-class_base= require("components.helper.classic")
+local Playing = class_base:extend()
 
-require("components.helper.vector")
-
-require("others.globals")
-
-require("others.game_states")
-require("others.keyhandler")
-
-require("components.collision_checker")
-require("components.game_objects.static_block")
-
-
-
-states = {
-	[GameStates.PLAYER_ALIVE] = require("states.playing")(),
-	[GameStates.EDITOR] = require("states.editor"),
-	[20] = require("states.menue"),
-	[30] = require("states.roomer")
-}
-
-
-
-local game = {}
-
-
-------------------------------------------------
-------------------------------------------------
-
-
-
-
-
-
-function ini_player()
+local function ini_player()
     player.pos = vector(0)
     player.vel = vector(0)
     player.acc = vector(0)
@@ -41,7 +9,7 @@ function ini_player()
     
     player.vel:add(gravity)
 end
-function slow_player()
+local function slow_player()
     local slow_perc = 0.01
     table.insert(string_list_distances,"Player speed x: "..player.vel.x)
     table.insert(string_list_distances,"Player speed_vec: "..player.vel:length())
@@ -53,7 +21,7 @@ function slow_player()
     end
 end
 
-function update_player()
+local function update_player()
    local max_x = 10
    local max_y = 10
   
@@ -103,6 +71,7 @@ end
 
 write_data = false
 local function hook_start(event,line)
+	
   local info = debug.getinfo(2)
   local name =info.name
   
@@ -130,7 +99,12 @@ end
 
 
 
-function game.load()
+function Playing:new()
+	
+end
+
+
+function Playing:load()
   gravity = vector(0,0.3)
   jump = vector(0,-7)
   right = vector(0.3,0)
@@ -138,7 +112,7 @@ function game.load()
   
   --debug.sethook(hook_start,"cl")
   
-  ini_player()
+  self:ini_player()
   scr_width,scr_height = love.graphics.getDimensions()
   
   --init a test object for now
@@ -149,83 +123,84 @@ function game.load()
 end
 
 
-
-
-function game.update()
-  --check key actions
+function Playing:handle_action(action)
+--check key actions
   string_list_distances ={}
   
-  for key,v in pairs(key_list) do
-    local action=handle_keys(key)--get key callbacks
+
     
-	states[game_state]:handle_action(action)
-  end
-
-  states[game_state]:update()
-  states[game_state]:mouse()
-  
-  
-  
-  mouse_event = nil
-end
-
-
-function game.draw()
-	states[game_state]:draw()
-	
     
-  
-
-  
-  
-  --debug prints 
-  love.graphics.print(table.concat(string_list_distances,"\n"),0,0)
-  
-  
-  for idx,line in pairs(dash_lines) do
-      if line.stop then
-        love.graphics.circle("line",line.start.x,line.start.y,5)
-        love.graphics.circle("line",line.stop.x,line.stop.y,5)
-        love.graphics.line(line.start.x,line.start.y,line.stop.x,line.stop.y)
-      else
-        
-      end
-  end
-  
-  
-  
-  if no_gravity == true then
-    
-    love.graphics.setColor(0.5,0.0,0)
-    love.graphics.rectangle("fill",player.pos.x,player.pos.y,32,32)
-  
-	love.graphics.setColor(1,1.0,1)
-  end
-  
-
-  
-  
-end
-
-
-function game.keyHandle(key,code,r,pressed_)
-    --real handling...
-    if pressed_ == true then
-        key_list[key] = true
-        last_key=key
-    else
-        key_list[key] = nil
+    --editor actions ... don't mind this
+    if action["start_edit"] then
+        game_state = GameStates.EDITOR
     end
-end
-
-
-function game.MouseHandle(x,y,key,t)
-    mouse_event = {x=x,y=y,key=key,t=t}
-end
-
-function game.MouseMoved(x,y)
     
+    
+    
+    if action["move"] then
+        --print(action["move"])
+        player.vel:add(action["move"])
+    end
+
+    
+    if action["jump"] and is_on_object(player) then
+        player.vel:add(action["jump"])
+    end
+    
+    if action["dash"]  then
+      
+      function dash_start()
+      
+		  table.insert(string_list_distances,"tried dash")
+		  if dash_used == false then
+			table.insert(string_list_distances,"dashed")
+			no_gravity = true
+		  
+			if key_list["left"] then
+			  player.vel.x = -vel_dash
+			  player.vel.y = 0
+			elseif key_list["right"] then
+			  player.vel.x = vel_dash
+			  player.vel.y = 0
+			end
+			
+			if key_list["up"] then
+			  player.vel.y = -vel_dash
+			elseif key_list["down"] then
+			  player.vel.y = vel_dash
+			end
+			table.insert(dash_lines,{start={x=player.pos.x,y=player.pos.y}})
+			dash_used = true
+			dash_timer = love.timer.getTime()
+		  end
+	  end
+    
+      dash_start()
+    end
+
+
+  
+  
+end
+
+function Playing:update()
+	update_player()
+end
+function Playing:draw()
+	for idx,object in pairs(objects) do
+        object:draw()
+    end
+
+	love.graphics.rectangle("fill",player.pos.x,player.pos.y,32,32)
+end
+
+function Playing:mouse()
+	
 end
 
 
-return game
+function Playing:unload()
+	
+end
+
+return Playing

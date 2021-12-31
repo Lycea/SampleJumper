@@ -124,7 +124,11 @@ function handle_collisions (entity)
           if collides == "bottom" then
             entity.pos.y = object.pos.y -entity.dim.height
             entity.vel.y =0
+			
             dash_used = false
+			no_gravity = false
+
+			
           elseif collides == "top" then
               entity.vel.y =0
               entity.pos.y = object.pos.y +object.dim.height

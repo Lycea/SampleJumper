@@ -1,0 +1,39 @@
+local temp = class_base:extend()
+
+
+
+
+
+
+function temp:new()
+	
+end
+
+
+function temp:load()
+  
+end
+
+
+function temp:handle_action(action)
+ 
+  
+end
+
+function temp:update()
+
+end
+function temp:draw()
+
+end
+
+function temp:mouse()
+	
+end
+
+
+function temp:unload()
+	
+end
+
+return temp
